@@ -1,0 +1,188 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String              @id @default(cuid())
+  name           String
+  username       String              @unique
+  email          String              @unique
+  role           String              @default("FAMILY")
+  avatar         String?
+  passwordHash   String?
+  orders         Order[]
+  cookedMenus    TomorrowMenu[]      @relation("MenuCook")
+  blogPosts      BlogPost[]
+  comments       Comment[]
+  shoppingChecks ShoppingListCheck[]
+  timelineEvents TimelineEvent[]
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+}
+
+model Dish {
+  id            String           @id @default(cuid())
+  name          String
+  coverImage    String?
+  category      String
+  tags          String           @default("[]")
+  description   String?
+  cookingTime   Int?
+  difficulty    String?
+  priceCents    Int              @default(0)
+  favoriteLevel Int              @default(3)
+  ingredients   Ingredient[]
+  steps         RecipeStep[]
+  notes         CookingNote[]
+  journals      CookingJournal[]
+  orderItems    OrderItem[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+}
+
+model Ingredient {
+  id     String  @id @default(cuid())
+  dishId String
+  dish   Dish    @relation(fields: [dishId], references: [id], onDelete: Cascade)
+  name   String
+  amount Float?
+  unit   String?
+  kind   String  @default("MAIN")
+}
+
+model RecipeStep {
+  id         String @id @default(cuid())
+  dishId     String
+  dish       Dish   @relation(fields: [dishId], references: [id], onDelete: Cascade)
+  stepNumber Int
+  content    String
+}
+
+model CookingNote {
+  id        String   @id @default(cuid())
+  dishId    String
+  dish      Dish     @relation(fields: [dishId], references: [id], onDelete: Cascade)
+  content   String
+  createdAt DateTime @default(now())
+}
+
+model CookingJournal {
+  id        String   @id @default(cuid())
+  dishId    String
+  dish      Dish     @relation(fields: [dishId], references: [id], onDelete: Cascade)
+  content   String
+  createdAt DateTime @default(now())
+}
+
+model Order {
+  id         String      @id @default(cuid())
+  userId     String
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  targetDate DateTime
+  status     String      @default("SUBMITTED")
+  items      OrderItem[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@unique([userId, targetDate])
+}
+
+model OrderItem {
+  id            String    @id @default(cuid())
+  orderId       String
+  dishId        String
+  status        String    @default("ACTIVE")
+  completedAt   DateTime?
+  completedById String?
+  order         Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  dish          Dish      @relation(fields: [dishId], references: [id], onDelete: Cascade)
+
+  @@unique([orderId, dishId])
+  @@index([status])
+  @@index([completedAt])
+}
+
+model TomorrowMenu {
+  id          String    @id @default(cuid())
+  targetDate  DateTime  @unique
+  status      String    @default("PENDING")
+  cookedById  String?
+  cookedBy    User?     @relation("MenuCook", fields: [cookedById], references: [id], onDelete: SetNull)
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Inventory {
+  id            String    @id @default(cuid())
+  name          String
+  quantity      Float     @default(0)
+  unit          String    @default("")
+  stockedAt     DateTime  @default(now())
+  shelfLifeDays Int?
+  expiresAt     DateTime?
+  note          String?
+  updatedAt     DateTime  @updatedAt
+
+  @@index([name, unit])
+  @@index([expiresAt])
+}
+
+model ShoppingListCheck {
+  id          String    @id @default(cuid())
+  targetDate  DateTime
+  itemKey     String
+  checked     Boolean   @default(false)
+  checkedAt   DateTime?
+  checkedById String?
+  checkedBy   User?     @relation(fields: [checkedById], references: [id], onDelete: SetNull)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([targetDate, itemKey])
+  @@index([checked])
+}
+
+model BlogPost {
+  id        String    @id @default(cuid())
+  authorId  String
+  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  title     String
+  content   String
+  kind      String    @default("MESSAGE")
+  images    String    @default("[]")
+  tags      String    @default("[]")
+  comments  Comment[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  postId    String
+  post      BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  content   String
+  createdAt DateTime @default(now())
+}
+
+model TimelineEvent {
+  id               String   @id @default(cuid())
+  authorId         String
+  author           User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  sourceBlogPostId String?  @unique
+  title            String
+  content          String
+  date             DateTime
+  images           String   @default("[]")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([date])
+}

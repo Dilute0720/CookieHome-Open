@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "BlogPost" ADD COLUMN "images" TEXT NOT NULL DEFAULT '[]';
+ALTER TABLE "BlogPost" ADD COLUMN "tags" TEXT NOT NULL DEFAULT '[]';

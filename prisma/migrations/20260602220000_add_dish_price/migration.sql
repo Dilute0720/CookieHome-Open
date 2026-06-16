@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Dish" ADD COLUMN "priceCents" INTEGER NOT NULL DEFAULT 0;

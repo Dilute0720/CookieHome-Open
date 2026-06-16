@@ -1,0 +1,41 @@
+{
+  "name": "family-private-blog",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "test": "vitest run",
+    "db:migrate": "prisma migrate dev",
+    "db:apply:init": "sqlite3 prisma/dev.db < prisma/migrations/20260602192000_init/migration.sql && prisma generate",
+    "db:seed": "node prisma/seed.mjs",
+    "inventory:import": "node scripts/inventory-import.mjs"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.17.0",
+    "next": "16.2.7",
+    "next-auth": "^4.24.14",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "sharp": "^0.34.5",
+    "tailwind-merge": "^3.6.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.7",
+    "prisma": "^6.19.3",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vitest": "^4.1.8"
+  }
+}
