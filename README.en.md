@@ -4,6 +4,8 @@
 
 A private family blog and home kitchen management system.
 
+> This project was fully generated and maintained with Codex, including product planning, implementation, UI iteration, debugging, documentation, and the open-source release process.
+
 CookieHome is designed for a small household rather than a public community. It combines meal planning, recipe management, ordering, inventory, shopping lists, family journals, and a timeline into one warm personal website.
 
 ## Tech Stack
