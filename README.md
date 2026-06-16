@@ -1,5 +1,7 @@
 # 曲奇堡的小家
 
+[English README](./README.en.md)
+
 家庭私密博客 + “明天吃什么”系统。
 
 ## 技术栈
